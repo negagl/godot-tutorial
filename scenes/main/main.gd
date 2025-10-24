@@ -1,10 +1,14 @@
-extends Node
+extends Node2D
 
 @export var mob_scene: PackedScene
+
 var score
+var screen_size
 
 func _ready() -> void:
-	pass
+	screen_size = get_viewport_rect().size
+	adapt_mob_path_to_screen()
+
 
 func game_over() -> void:
 	$ScoreTimer.stop()
@@ -58,3 +62,22 @@ func _on_score_timer_timeout() -> void:
 func _on_start_timer_timeout() -> void:
 	$MobTimer.start()
 	$ScoreTimer.start()
+
+
+func adapt_mob_path_to_screen():
+	var curve = $MobPath.curve
+	curve.clear_points()
+
+	var margin = 10.0 # opcional: para que los mobs aparezcan justo fuera del borde
+
+	var top_left = Vector2(-margin, -margin)
+	var top_right = Vector2(screen_size.x + margin, -margin)
+	var bottom_right = Vector2(screen_size.x + margin, screen_size.y + margin)
+	var bottom_left = Vector2(-margin, screen_size.y + margin)
+
+	# Añadir puntos en sentido horario
+	curve.add_point(top_left)
+	curve.add_point(top_right)
+	curve.add_point(bottom_right)
+	curve.add_point(bottom_left)
+	curve.add_point(top_left) # cerrar el loop

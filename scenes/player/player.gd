@@ -2,8 +2,10 @@ extends Area2D
 
 signal hit
 
-@export var speed = 400
+@export var speed = 300
+
 var screen_size
+var input_velocity := Vector2.ZERO
 
 func _ready() -> void:
 	screen_size = get_viewport_rect().size
@@ -11,21 +13,27 @@ func _ready() -> void:
 
 
 func _process(delta: float) -> void:
-	# Creates a (0,0)
 	var velocity = Vector2.ZERO
 	
-	# Detect key and add to the velocity
-	if Input.is_action_pressed("move_right"):
-		velocity.x += 1
-	if Input.is_action_pressed("move_left"):
-		velocity.x -= 1
-	if Input.is_action_pressed("move_up"):
-		velocity.y -= 1
-	if Input.is_action_pressed("move_down"):
-		velocity.y += 1
+	if !is_touch_device():
+		# Detect key and add to the velocity
+		if Input.is_action_pressed("move_right"):
+			input_velocity.x += 1
+		elif Input.is_action_pressed("move_left"):
+			input_velocity.x -= 1
+		else:
+			input_velocity.x = 0
+			
+		if Input.is_action_pressed("move_up"):
+			input_velocity.y -= 1
+		elif Input.is_action_pressed("move_down"):
+			input_velocity.y += 1
+		else:
+			input_velocity.y = 0
+	
+	velocity = input_velocity.normalized() * speed
 	
 	if velocity.length() > 0:
-		velocity = velocity.normalized() * speed
 		$AnimatedSprite2D.play()
 	else:
 		$AnimatedSprite2D.stop()
@@ -56,3 +64,13 @@ func start(pos):
 	position = pos
 	show()
 	$CollisionShape2D.disabled = false
+
+
+func _on_hud_move_player(move: Vector2) -> void:
+	if is_touch_device():
+		input_velocity = move
+	
+
+
+func is_touch_device() -> bool:
+	return DisplayServer.is_touchscreen_available()

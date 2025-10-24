@@ -1,8 +1,9 @@
-[gd_scene load_steps=9 format=4 uid="uid://l5pnk4mve0l8"]
+[gd_scene load_steps=10 format=4 uid="uid://l5pnk4mve0l8"]
 
 [ext_resource type="Script" uid="uid://c1mu24lu5pobf" path="res://scenes/main/main.gd" id="1_0xm2m"]
 [ext_resource type="PackedScene" uid="uid://cubasxev48cig" path="res://scenes/player/player.tscn" id="1_ig7tw"]
 [ext_resource type="PackedScene" uid="uid://ce3mhpnxll25p" path="res://scenes/mob/mob.tscn" id="2_h2yge"]
+[ext_resource type="Texture2D" uid="uid://c47qv5aok5j4n" path="res://art/a seamless outer spa.png" id="3_ow5a4"]
 [ext_resource type="PackedScene" uid="uid://cbpxj6lbxb85p" path="res://scenes/hud/hud.tscn" id="4_1bvp3"]
 [ext_resource type="AudioStream" uid="uid://bh18d0m46faqv" path="res://art/gameover.wav" id="5_lquwl"]
 
@@ -21,17 +22,14 @@ sampling_rate = 44100.0
 packet_sequence = SubResource("OggPacketSequence_1utue")
 loop = true
 
-[node name="Main" type="Node"]
+[node name="Main" type="Node2D"]
 script = ExtResource("1_0xm2m")
 mob_scene = ExtResource("2_h2yge")
 
-[node name="ColorRect" type="ColorRect" parent="."]
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-color = Color(0.137255, 0.109804, 0.364706, 1)
+[node name="Sprite2D" type="Sprite2D" parent="."]
+position = Vector2(233, 582)
+rotation = 1.5708
+texture = ExtResource("3_ow5a4")
 
 [node name="Player" parent="." instance=ExtResource("1_ig7tw")]
 
@@ -65,4 +63,5 @@ stream = ExtResource("5_lquwl")
 [connection signal="timeout" from="MobTimer" to="." method="_on_mob_timer_timeout"]
 [connection signal="timeout" from="ScoreTimer" to="." method="_on_score_timer_timeout"]
 [connection signal="timeout" from="StartTimer" to="." method="_on_start_timer_timeout"]
+[connection signal="move_player" from="HUD" to="Player" method="_on_hud_move_player"]
 [connection signal="start_game" from="HUD" to="." method="new_game"]
